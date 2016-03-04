@@ -30,13 +30,13 @@ zipをダウンロード
 
 zipを解凍し適当なディレクトリに配置
 
-c:¥phantomjs  
-c:¥casperjs  
+- c:¥phantomjs  
+- c:¥casperjs  
 
 環境変数にPATHを追記
 
-変数名：PATH  
-変数値：C:¥phantomjs¥bin;C:¥casperjs¥bin;
+- 変数名：PATH  
+- 変数値：C:¥phantomjs¥bin;C:¥casperjs¥bin;
 
 確認
 
