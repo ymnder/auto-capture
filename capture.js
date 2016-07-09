@@ -20,23 +20,28 @@ var buf = fs.read('./list.csv');
     buf = buf.replace( /\r\n/g , '\n' );
 var captureList = makeCSVArray(buf);
 
-// コマンドラインからのデバイス指定を確認
-if (casper.cli.args.length < 1) {
-    // 指定なしのデフォルト
-    var inputDevice = 'pc';
-    var viewport = {width: 1280, hight: 800};
-    var ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36';
-} else {
-    // 指定ありの場合CSVから情報を取得
-    var inputDevice = casper.cli.args[0];
+// capture device
+var devlist = fs.read('./device.csv');
+    devlist = devlist.replace( /\r\n/g , '\n' );
+var deviceList = makeCSVArray(devlist);
 
-    var buf = fs.read('./device.csv');
-        buf = buf.replace( /\r\n/g , '\n' );
-    var deviceSpec = findFromCSV(buf, inputDevice);
-
-    var viewport = {width: parseInt(deviceSpec[1]), hight: parseInt(deviceSpec[2])};
-    var ua = deviceSpec[3].replace(/(^\s+)|(\s+$)/g, '"');
-}
+// // コマンドラインからのデバイス指定を確認
+// if (casper.cli.args.length < 1) {
+//     // 指定なしのデフォルト
+//     var inputDevice = 'pc';
+//     var viewport = {width: 1280, hight: 800};
+//     var ua = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36';
+// } else {
+//     // 指定ありの場合CSVから情報を取得
+//     var inputDevice = casper.cli.args[0];
+//
+//     var buf = fs.read('./device.csv');
+//         buf = buf.replace( /\r\n/g , '\n' );
+//     var deviceSpec = findFromCSV(buf, inputDevice);
+//
+//     var viewport = {width: parseInt(deviceSpec[1]), hight: parseInt(deviceSpec[2])};
+//     var ua = deviceSpec[3].replace(/(^\s+)|(\s+$)/g, '"');
+// }
 
 // キャプチャーを撮る間隔
 var waitTime = 3000;
@@ -54,32 +59,36 @@ var screenshotDateTime = screenshotNow.getFullYear() + pad(screenshotNow.getMont
 // casperJSの処理を開始
 casper.start();
 
-// viewport, UA, Basic認証の情報を設定
-casper.userAgent(ua);
-casper.viewport(viewport.width, viewport.hight);
-casper.setHttpAuth(basicId, basicPass);
+casper.each(deviceList, function(casper, deviceData){
+    var deviceSpec = deviceData[0];
+    var viewport = {width: parseInt(deviceData[1]), hight: parseInt(deviceData[2])};
+    var ua = deviceData[3].replace(/(^\s+)|(\s+$)/g, '"');
+    // viewport, UA, Basic認証の情報を設定
+    casper.userAgent(ua);
+    casper.viewport(viewport.width, viewport.hight);
+    casper.setHttpAuth(basicId, basicPass);
 
-// 取得したURLリストからキャプチャーを撮る処理
-casper.each(captureList, function(casper, data) {
-    var url = data[0];  // ページのURL
-    var file = data[1];  // 保存する画像名
+    // 取得したURLリストからキャプチャーを撮る処理
+    casper.each(captureList, function(casper, data) {
+        var url = data[0];  // ページのURL
+        var file = data[1];  // 保存する画像名
 
-    // ページを開く
-    this.thenOpen(url, function () {
-        this.wait(waitTime);
-    });
-    this.then(function () {
-        // コマンドラインにメッセージを出す
-        this.echo('URL: ' + url + ' | File: ' + file + '.png');
-        // background-colorに指定がない場合透過されるので色をつける
-        this.evaluate(function(){
-            $('body').css('background-color','#fff');
+        // ページを開く
+        this.thenOpen(url, function () {
+            this.wait(waitTime);
         });
-        // キャプチャーした画像を保存する。/ をつけることでフォルダを作成
-        this.capture(screenshotDateTime + '-' + inputDevice + '/' + file + '.png');
+        this.then(function () {
+            // コマンドラインにメッセージを出す
+            this.echo('URL: ' + url + ' | File: ' + file + deviceSpec + '.png');
+            // background-colorに指定がない場合透過されるので色をつける
+            this.evaluate(function(){
+                $('body').css('background-color','#fff');
+            });
+            // キャプチャーした画像を保存する。/ をつけることでフォルダを作成
+            this.capture(screenshotDateTime + '-' + deviceSpec + '/' + file + '.png');
+        });
     });
 });
-
 // casperJSの処理を実行
 casper.run();
 
