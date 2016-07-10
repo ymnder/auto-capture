@@ -35,7 +35,9 @@ for PACKAGE in ${PACKAGES[@]}; do
 	# 例：
 	# adb shell input touchscreen swipe 0 200 500 200 # swipe left
 	# adb shell input touchscreen swipe 500 200 0 200 # swipe right
-	# sleep 5s
+	# PTRを使うなら
+	adb shell input touchscreen swipe 200 400 200 2000 1000
+	sleep 10s
 	adb shell screencap -p "/sdcard/${APPFILENAME}"
 	adb pull /sdcard/"${APPFILENAME}" ./autocap/${PACKAGE}/"${APPFILENAME}"
 	adb shell rm "/sdcard/${APPFILENAME}"
