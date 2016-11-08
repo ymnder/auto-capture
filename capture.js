@@ -35,7 +35,7 @@ casper.start();
 
 casper.each(deviceList, function(casper, deviceData){
     var deviceSpec = deviceData[0];
-    var viewport = {width: parseInt(deviceData[1]), hight: parseInt(deviceData[2])};
+    var viewport = {width: parseInt(deviceData[1]), height: parseInt(deviceData[2])};
     var ua = deviceData[3].replace(/(^\s+)|(\s+$)/g, '"');
     captureList.forEach(function(data) {
 
@@ -43,7 +43,7 @@ casper.each(deviceList, function(casper, deviceData){
         var file = data[1];  //画像名
         casper.then(function(){
             this.userAgent(ua);
-            this.viewport(viewport.width, viewport.hight);
+            this.viewport(viewport.width, viewport.height);
         });
         // ページを開く
         casper.thenOpen(url, function () {
