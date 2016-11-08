@@ -21,7 +21,7 @@ var devlist = fs.read('./device.tsv');
 var deviceList = makeTSVArray(devlist);
 
 // キャプチャーを撮る間隔
-var waitTime = 1500;
+var waitTime = 8000;
 
 // キャプチャーを保存するフォルダ名に使う文字列を日時から生成
 var screenshotNow = new Date();

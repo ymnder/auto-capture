@@ -1,6 +1,8 @@
 #!/bin/bash
 while :
 do
-  casperjs capture.js 
+  echo start
+  casperjs capture.js
+  echo end
   sleep 1200
 done
