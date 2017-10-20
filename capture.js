@@ -55,7 +55,7 @@ casper.each(deviceList, function(casper, deviceData){
             this.evaluate(function(){
                 $('body').css('background-color','#fff');
             });
-            this.capture(file + '/' + file + '-' + deviceSpec + screenshotDateTime  + '.png');
+            this.capture('screenshots/' + file + '/' + file + '-' + deviceSpec + screenshotDateTime  + '.png');
         });
     });
 });
